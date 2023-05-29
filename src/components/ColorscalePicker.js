@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Colorscale from './Colorscale.js';
 import chroma from 'chroma-js';
 import Tooltip from 'rc-tooltip';
@@ -23,19 +23,29 @@ import {
   DEFAULT_LIGHTNESS,
   DEFAULT_NCOLORS,
   DEFAULT_NPREVIEWCOLORS,
-  BUILTINS,
+  BUILTINS as DEFAULT_BUILTINS,
 } from './constants.js';
 
 import './ColorscalePicker.css';
 
 const Handle = Slider.Handle;
 
+function getVoltoColorscales(colors = []) {
+  const colorscales = {};
+
+  colors.forEach((item) => {
+    colorscales[item.title] = item.colorscale;
+  });
+
+  return colorscales;
+}
+
 export function getColorscale(
   colorscale,
   nSwatches,
   logBreakpoints,
   log,
-  colorscaleType
+  colorscaleType,
 ) {
   /*
    * getColorscale() takes a scale, modifies it based on the input
@@ -44,7 +54,7 @@ export function getColorscale(
   // helper function repeats a categorical colorscale array N times
   let repeatArray = (array, n) => {
     let arrays = Array.apply(null, new Array(n));
-    arrays = arrays.map(function() {
+    arrays = arrays.map(function () {
       return array;
     });
     return [].concat.apply([], arrays);
@@ -99,11 +109,11 @@ export default class ColorscalePicker extends Component {
   }
 
   componentDidMount() {
-    this.setState({colorscaleOnMount: this.props.colorscale});
+    this.setState({ colorscaleOnMount: this.props.colorscale });
   }
 
-  handle = props => {
-    const {value, dragging, index, ...restProps} = props;
+  handle = (props) => {
+    const { value, dragging, index, ...restProps } = props;
     return (
       <Tooltip
         prefixCls="rc-slider-tooltip"
@@ -123,10 +133,10 @@ export default class ColorscalePicker extends Component {
       this.state.nSwatches,
       this.state.logBreakpoints,
       !this.state.log,
-      this.state.colorscaleType
+      this.state.colorscaleType,
     );
 
-    this.setState({log: !this.state.log, colorscale: cs});
+    this.setState({ log: !this.state.log, colorscale: cs });
 
     this.props.onChange(cs);
   };
@@ -144,7 +154,7 @@ export default class ColorscalePicker extends Component {
       newColorscale.length,
       this.state.logBreakpoints,
       this.state.log,
-      this.state.colorscaleType
+      this.state.colorscaleType,
     );
 
     let previousColorscale = newColorscale;
@@ -177,13 +187,13 @@ export default class ColorscalePicker extends Component {
     this.props.onChange(cs, this.state.colorscaleType);
   };
 
-  updateSwatchNumber = ns => {
+  updateSwatchNumber = (ns) => {
     const cs = getColorscale(
       this.state.previousColorscale,
       ns,
       this.state.logBreakpoints,
       this.state.log,
-      this.state.colorscaleType
+      this.state.colorscaleType,
     );
     this.setState({
       nSwatches: ns,
@@ -193,7 +203,7 @@ export default class ColorscalePicker extends Component {
     this.props.onChange(cs);
   };
 
-  updateBreakpoints = e => {
+  updateBreakpoints = (e) => {
     const bp = e.currentTarget.valueAsNumber;
 
     const cs = getColorscale(
@@ -201,7 +211,7 @@ export default class ColorscalePicker extends Component {
       this.state.nSwatches,
       bp,
       this.state.log,
-      this.state.colorscaleType
+      this.state.colorscaleType,
     );
 
     this.setState({
@@ -212,7 +222,7 @@ export default class ColorscalePicker extends Component {
     this.props.onChange(cs);
   };
 
-  updateBreakpointArray = e => {
+  updateBreakpointArray = (e) => {
     const bpArr = e.currentTarget.value
       .replace(/,\s*$/, '')
       .split(',')
@@ -222,26 +232,26 @@ export default class ColorscalePicker extends Component {
     });
   };
 
-  updateCubehelixStart = start => {
+  updateCubehelixStart = (start) => {
     const rot = this.state.cubehelix.rotations;
     this.updateCubehelix(start, rot);
   };
 
-  updateCubehelixRotations = rot => {
+  updateCubehelixRotations = (rot) => {
     const start = this.state.cubehelix.start;
     this.updateCubehelix(start, rot);
   };
 
-  updateCubehelixStartState = start => {
+  updateCubehelixStartState = (start) => {
     const ch = this.state.cubehelix;
     ch.start = start;
-    this.setState({cubehelix: ch});
+    this.setState({ cubehelix: ch });
   };
 
-  updateCubehelixRotState = rot => {
+  updateCubehelixRotState = (rot) => {
     const ch = this.state.cubehelix;
     ch.rotations = rot;
-    this.setState({cubehelix: ch});
+    this.setState({ cubehelix: ch });
   };
 
   updateCubehelix = (start, rot) => {
@@ -333,7 +343,7 @@ export default class ColorscalePicker extends Component {
   }
 
   render() {
-    const colorscaleOptions = COLORSCALE_TYPES.map(c => ({
+    const colorscaleOptions = COLORSCALE_TYPES.map((c) => ({
       label: c + ' scales',
       value: c,
     }));
@@ -345,7 +355,7 @@ export default class ColorscalePicker extends Component {
     return (
       <div
         className={colorscalePickerContainerClassnames}
-        style={{width: this.props.width || '300px'}}
+        style={{ width: this.props.width || '300px' }}
       >
         <div className="colorscalePickerTopContainer">
           <Select
@@ -376,6 +386,7 @@ export default class ColorscalePicker extends Component {
           updateCubehelixRotations={this.updateCubehelixRotations}
           updateBreakpointArray={this.updateBreakpointArray}
           scaleLength={this.props.scaleLength}
+          voltoColors={this.props.voltoColors}
         />
 
         {this.props.disableSwatchControls ? null : this.renderSwatchControls()}
@@ -405,11 +416,19 @@ export class ColorscalePaletteSelector extends Component {
       updateCubehelixRotations,
       updateBreakpointArray,
       scaleLength,
+      voltoColors,
     } = this.props;
+
+    const BUILTINS = {
+      ...DEFAULT_BUILTINS,
+      volto: getVoltoColorscales(voltoColors),
+    };
+
+    console.log('HERE', BUILTINS, voltoColors);
 
     return (
       <div className="colorscalePickerBottomContainer">
-        <div style={{margin: '0 auto'}}>
+        <div style={{ margin: '0 auto' }}>
           <Colorscale
             key="reset"
             colorscale={colorscaleOnMount}
@@ -417,7 +436,6 @@ export class ColorscalePaletteSelector extends Component {
             label={'RESET'}
             scaleLength={scaleLength || DEFAULT_NPREVIEWCOLORS}
           />
-
 
           {BUILTINS.hasOwnProperty(colorscaleType) &&
             Object.keys(BUILTINS[colorscaleType]).map((x, i) => (
