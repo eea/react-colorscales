@@ -145,6 +145,7 @@ export const BUILTINS = {
     ],
   },
   categorical: {
+    GPBU: ['#15957D', '#FAEA8A', '#DD552B', '#AFB0B3'],
     EEA6: [
       '#3D2201',
       '#3C096C',
