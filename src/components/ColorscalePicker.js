@@ -424,8 +424,6 @@ export class ColorscalePaletteSelector extends Component {
       volto: getVoltoColorscales(voltoColors),
     };
 
-    console.log('HERE', BUILTINS, voltoColors);
-
     return (
       <div className="colorscalePickerBottomContainer">
         <div style={{ margin: '0 auto' }}>
