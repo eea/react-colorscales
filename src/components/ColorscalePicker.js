@@ -421,7 +421,9 @@ export class ColorscalePaletteSelector extends Component {
 
     const BUILTINS = {
       ...DEFAULT_BUILTINS,
-      volto: getVoltoColorscales(voltoColors),
+      volto: {
+        ...DEFAULT_BUILTINS.volto,
+        ...(getVoltoColorscales(voltoColors) || {})},
     };
 
     return (
