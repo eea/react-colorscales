@@ -1,14 +1,16 @@
 process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 
+const ESLintPlugin = require("eslint-webpack-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const autoprefixer = require("autoprefixer");
-const webpack = require("webpack");
 const eslintFormatter = require("react-dev-utils/eslintFormatter");
 const paths = require("./config/paths");
 
 const shouldUseSourceMap = false;
 
 module.exports = {
+  mode: "production",
   // Don't attempt to continue if there are any errors.
   bail: true,
   // Generate source maps
@@ -17,33 +19,23 @@ module.exports = {
   output: {
     path: paths.appBuild,
     filename: "index.js",
-    libraryTarget: "umd"
+    libraryTarget: "umd",
   },
   resolve: {
-    extensions: [".web.js", ".js", ".json", ".web.jsx", ".jsx"]
+    extensions: [".web.js", ".js", ".json", ".web.jsx", ".jsx"],
   },
   module: {
     strictExportPresence: true,
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        enforce: "pre",
-        use: [
-          {
-            options: {
-              formatter: eslintFormatter,
-              eslintPath: require.resolve("eslint")
-            },
-            loader: require.resolve("eslint-loader")
-          }
-        ],
-        include: paths.appLibSrc
-      },
-      {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
         // back to the "file" loader at the end of the loader list.
         oneOf: [
+          // {
+          //   test: /\.cjs$/,
+          //   type: "javascript/auto", // Allow Webpack to parse CommonJS properly
+          // },
           // "url" loader works just like "file" loader but it also embeds
           // assets smaller than specified size as data URLs to avoid requests.
           {
@@ -51,17 +43,14 @@ module.exports = {
             loader: require.resolve("url-loader"),
             options: {
               limit: 10000,
-              name: "[name].[ext]"
-            }
+              name: "[name].[ext]",
+            },
           },
           // Process JS with Babel.
           {
             test: /\.(js|jsx)$/,
             include: paths.appLibSrc,
             loader: require.resolve("babel-loader"),
-            options: {
-              compact: true
-            }
           },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.
@@ -79,33 +68,28 @@ module.exports = {
           {
             test: /\.(css|scss)$/,
             use: [
-              {
-                loader: "style-loader" // creates style nodes from JS strings
-              },
-              {
-                loader: "css-loader" // translates CSS into CommonJS
-              },
+              "style-loader",
+              "css-loader",
               {
                 loader: require.resolve("postcss-loader"),
                 options: {
-                  // Necessary for external CSS imports to work
-                  // https://github.com/facebookincubator/create-react-app/issues/2677
-                  ident: "postcss",
-                  plugins: () => [
-                    require("postcss-flexbugs-fixes"),
-                    autoprefixer({
-                      browsers: [
-                        ">1%",
-                        "last 4 versions",
-                        "Firefox ESR",
-                        "not ie < 9" // React doesn't support IE8 anyway
-                      ],
-                      flexbox: "no-2009"
-                    })
-                  ]
-                }
-              }
-            ]
+                  postcssOptions: {
+                    plugins: () => [
+                      require("postcss-flexbugs-fixes"),
+                      autoprefixer({
+                        browsers: [
+                          ">1%",
+                          "last 4 versions",
+                          "Firefox ESR",
+                          "not ie < 9", // React doesn't support IE8 anyway
+                        ],
+                        flexbox: "no-2009",
+                      }),
+                    ],
+                  },
+                },
+              },
+            ],
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
@@ -117,47 +101,27 @@ module.exports = {
             // it's runtime that would otherwise processed through "file" loader.
             // Also exclude `html` and `json` extensions so they get processed
             // by webpacks internal loaders.
-            exclude: [/\.js$/, /\.html$/, /\.json$/],
+            exclude: [/\.js$/, /\.html$/, /\.json$/, /\.cjs$/, /\.mjs$/],
             options: {
-              name: "[name].[ext]"
-            }
-          }
+              name: "[name].[hash][ext]",
+            },
+          },
           // ** STOP ** Are you adding a new loader?
           // Make sure to add the new loader(s) before the "file" loader.
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
   plugins: [
-    // Minify the code.
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false
-      },
-      output: {
-        comments: false,
-        // Turned on because emoji and regex is not minified properly using default
-        // https://github.com/facebookincubator/create-react-app/issues/2488
-        ascii_only: true
-      },
-      sourceMap: shouldUseSourceMap
-    })
+    new ESLintPlugin({
+      context: paths.appLibSrc,
+      eslintPath: require.resolve("eslint"),
+      formatter: eslintFormatter,
+    }),
+    new NodePolyfillPlugin(),
   ],
   externals: {
     react: "react",
-    "react-dom": "react-dom"
+    "react-dom": "react-dom",
   },
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
-    dgram: "empty",
-    fs: "empty",
-    net: "empty",
-    tls: "empty"
-  }
 };

@@ -1,15 +1,15 @@
 {
   "name": "react-colorscales",
-  "version": "1.0.2",
+  "version": "2.0.1",
   "description": "A React component for picking colorscales based on Chroma.js",
   "main": "build/index.js",
   "files": [
     "build/index.js"
   ],
   "scripts": {
-    "start": "webpack-dev-server --hot",
+    "start": "PUBLIC_URL=/ react-app-rewired start",
     "build": "node ./scripts/build.js",
-    "buildDemoBundle": "webpack ./docs/index.js --output-path ./docs --output-filename bundle.js"
+    "buildDemoBundle": "BUILD_PATH=./docs react-app-rewired build"
   },
   "repository": {
     "type": "git",
@@ -22,50 +22,38 @@
   "homepage": "https://github.com/plotly/react-colorscales#readme",
   "license": "MIT",
   "devDependencies": {
-    "autoprefixer": "7.1.2",
-    "babel-cli": "^6.26.0",
-    "babel-core": "6.25.0",
-    "babel-eslint": "7.2.3",
-    "babel-jest": "20.0.3",
-    "babel-loader": "7.1.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "chalk": "1.1.3",
-    "css-loader": "0.28.4",
-    "eslint": "4.4.1",
-    "eslint-config-react-app": "^2.0.0",
-    "eslint-loader": "1.9.0",
-    "eslint-plugin-flowtype": "2.35.0",
-    "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-jsx-a11y": "5.1.1",
-    "eslint-plugin-react": "7.1.0",
-    "file-loader": "0.11.2",
-    "fs-extra": "3.0.1",
-    "plotly.js": "1.39.2",
-    "postcss-flexbugs-fixes": "3.2.0",
-    "postcss-loader": "2.0.6",
-    "ramda": "^0.25.0",
-    "react": ">=0.14",
-    "react-dev-utils": "^3.1.0",
-    "react-dom": ">=0.14",
-    "react-hot-loader": "^4.0.0-beta.21",
-    "react-plotly.js": "^2.2.0",
-    "style-loader": "0.18.2",
-    "url-loader": "0.5.9",
-    "webpack": "3.5.1",
-    "webpack-dev-server": "2.7.1"
-  },
-  "peerDependencies": {
-    "react": ">=0.14",
-    "react-dom": ">=0.14"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint-webpack-plugin": "^4.2.0",
+    "lodash": "4.17.12",
+    "node-polyfill-webpack-plugin": "^4.1.0",
+    "plotly.js": "3.0.0",
+    "rc-tooltip": "6.4.0",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.2.1",
+    "react-dev-utils": "^12.0.1",
+    "react-dom": "^17.0.2",
+    "react-plotly.js": "^2.6.0",
+    "url-loader": "^4.1.1"
   },
   "dependencies": {
-    "chroma-js": "^1.3.4",
-    "rc-slider": "^8.4.0",
-    "react-select": "^1.2.1"
+    "chroma-js": "^3.1.2",
+    "rc-slider": "^11.1.8",
+    "react-select": "^5.10.0"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.2",
+    "react-dom": ">=17.0.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

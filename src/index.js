@@ -1,6 +1,5 @@
-import Colorscale from './components/Colorscale';
-import ColorscalePicker, {getColorscale} from './components/ColorscalePicker';
-import * as COLOR_PICKER_CONSTANTS from './components/constants';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-export default ColorscalePicker;
-export {Colorscale, COLOR_PICKER_CONSTANTS, getColorscale};
+ReactDOM.render(<App />, document.getElementById('root'));

@@ -5,7 +5,7 @@ const url = require("url");
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
 
@@ -20,7 +20,7 @@ function ensureSlash(path, needsSlash) {
   }
 }
 
-const getPublicUrl = appPackageJson =>
+const getPublicUrl = (appPackageJson) =>
   envPublicUrl || require(appPackageJson).homepage;
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
@@ -40,17 +40,17 @@ function getServedPath(appPackageJson) {
 module.exports = {
   dotenv: resolveApp(".env"),
   appBuild: resolveApp("build"),
-  appPublic: resolveApp("docs"),
-  appHtml: resolveApp("docs/index.html"),
+  appPublic: resolveApp("public"),
+  appHtml: resolveApp("puglic/index.html"),
   appPackageJson: resolveApp("package.json"),
-  appSrc: resolveApp("src"),
+  appSrc: resolveApp("src/lib"),
   yarnLockFile: resolveApp("yarn.lock"),
   appNodeModules: resolveApp("node_modules"),
   publicUrl: getPublicUrl(resolveApp("package.json")),
   servedPath: getServedPath(resolveApp("package.json")),
 
   // New paths for library
-  appIndexJs: resolveApp("docs/index.js"),
-  appLibIndexJs: resolveApp("src/index.js"),
-  appLibSrc: resolveApp("src")
+  appIndexJs: resolveApp("src/index.js"),
+  appLibIndexJs: resolveApp("src/lib/index.js"),
+  appLibSrc: resolveApp("src/lib"),
 };
