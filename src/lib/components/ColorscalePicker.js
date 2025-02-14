@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import Colorscale from "./Colorscale.js";
+import debounce from "lodash/debounce";
 import chroma from "chroma-js";
 import Tooltip from "rc-tooltip";
 import Slider from "rc-slider";
 import Select from "react-select";
+import Colorscale from "./Colorscale.js";
 // import 'react-select/dist/react-select.css';
 import "rc-slider/assets/index.css";
 
@@ -187,7 +188,7 @@ export default class ColorscalePicker extends Component {
     this.props.onChange(cs, this.state.colorscaleType);
   };
 
-  updateSwatchNumber = (ns) => {
+  updateSwatchNumber = debounce((ns) => {
     const cs = getColorscale(
       this.state.previousColorscale,
       ns,
@@ -201,7 +202,7 @@ export default class ColorscalePicker extends Component {
       customBreakpoints: DEFAULT_BREAKPOINTS,
     });
     this.props.onChange(cs);
-  };
+  }, 300);
 
   updateBreakpoints = (e) => {
     const bp = e.currentTarget.valueAsNumber;
@@ -301,7 +302,7 @@ export default class ColorscalePicker extends Component {
           max={100}
           defaultValue={this.state.nSwatches}
           handle={this.handle}
-          onAfterChange={this.updateSwatchNumber}
+          onChange={this.updateSwatchNumber}
         />
       );
     }
