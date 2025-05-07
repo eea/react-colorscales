@@ -1,5 +1,5 @@
 {
-  "name": "react-colorscales",
+  "name": "@eeacms/react-colorscales",
   "version": "2.1.0",
   "description": "A React component for picking colorscales based on Chroma.js",
   "main": "build/index.js",
